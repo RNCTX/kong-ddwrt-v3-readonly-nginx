@@ -68,7 +68,7 @@ How to use:
 4. Replace the binary in /opt/sbin with the one linked here (rm -f /opt/sbin/nginx && scp user@192.168.1.xx:nginx /opt/sbin/nginx)
 5. Modify your config file in /opt/etc/nginx to point the logs somewhere else, or disable the logs entirely, or whatever you want to do with them. **BIG FAT WARNING: if you do not do this, the logs will fill up all your RAM and (probably) crash your router, you must turn them off or send them somewhere else**.
 6. Run nginx once so it can chown all of its directories on /opt to itself (/opt/etc/init.d/S80nginx start && /opt/etc/init.d/S80nginx stop)
-7. In your Administration -> Commands -> Startup, add a command to read-only the internal flash at boot: (mount -o remount,ro /opt)
+7. In your Administration -> Commands -> Startup, add a command to read-only the internal flash at boot: (mount --bind /jffs/opt /opt && mount -o remount,ro /opt && /opt/etc/init.d/S80nginx start))
 8. Reboot the router
 
 
