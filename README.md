@@ -55,7 +55,7 @@ endif
 
 This means that before Nginx will write a log anywhere else, it checks for its log folder under /opt to be writable.  If you wish to run packages on /opt mounted read-only to avoid wearing out your flash device, as I do, then that won't work. Nginx never releases that default logfile location. As long as Nginx is running, you can't remount /opt as read-only.
 
-If only Nginx were trying to put its default log under the ramdisk on /tmp, this would be fixed and Nginx would be totally usable with /opt mounted on the flash device as read-only. You could then, say... redirect Nginx logs to a remote syslog on another machine, which makes way more sense than writing logs to a USB stick (and also eliminates the obvious physical security issue with putting SSL keys on a USB stick, too). Nginx supports syslog by default, so that would be a trivial (just config, no re-compile) change to make.
+If only Nginx were trying to put its default log under the ramdisk on /tmp, this would be fixed and Nginx would be totally usable with /opt mounted on the flash device as read-only. You could then, say... redirect Nginx logs to a remote syslog on another machine, which makes way more sense than writing logs to a USB stick (and also eliminates the obvious physical security issue with putting SSL keys on a USB stick, too). Nginx supports remote syslogs by default, so that would be a trivial (just config, no re-compile) change to make.
 
 So this re-build of the Nginx binary does just that: points Nginx logs, lock, and pid to existing folders on the /tmp ramdisk.
 
