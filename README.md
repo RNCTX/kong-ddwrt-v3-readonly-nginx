@@ -3,7 +3,7 @@
 
 Hi folks, I figured someone else might find this useful.
 
-I have a Netgear R7000 running DD-WRT and was planning on using it for a reverse proxy, among other things, to host various virtual machines I use for web development in my house. Optimally, I should not be relying on the suggested solution of a USB stick to hold things, since the router has plenty of internal flash memory for a few packages and SSL keys.  But one would want to run that internal flash as read-only to not wear it out, obviously.
+I have a Netgear R7000 running DD-WRT and was planning on using it for a reverse proxy, among other things, to host various virtual machines I use for web development in my house. Optimally, I should not be running either USB or the router's internal flash memory monted read+write, else it will wear out over time.  Running it read-only is preferable.
 
 Lighttpd is included in Kong's build(s) of DD-WRT, but unfortunately it does not support SSL passthrough like Nginx does.  The problem with making the switch from Lighttpd is that Nginx as-compiled by the maintainer for the Entware DD-WRT Nginx package points to /opt for the log, pid, and lock files by default.  
 
@@ -53,13 +53,13 @@ ifeq ($(CONFIG_NGINX_NAXSI),y)
 endif
 ```
 
-This means that before Nginx will write a log anywhere else, it checks for its log folder under /opt to be writable.  If you wish to run packages on /opt mounted read-only to avoid wearing out the internal flash, as I do, then that won't work. Nginx never releases that default logfile location. As long as Nginx is running, you can't remount /opt as read-only.
+This means that before Nginx will write a log anywhere else, it checks for its log folder under /opt to be writable.  If you wish to run packages on /opt mounted read-only to avoid wearing out your flash device, as I do, then that won't work. Nginx never releases that default logfile location. As long as Nginx is running, you can't remount /opt as read-only.
 
-If only Nginx were trying to put its default log under the ramdisk on /tmp, this would be fixed and Nginx would be totally usable with /opt mounted on the internal flash as read-only. You could then, say... redirect Nginx logs to a remote syslog on another machine, which makes way more sense than writing logs to a USB stick (and also eliminates the obvious physical security issue with putting SSL keys on a USB stick, too). Nginx supports syslog by default, so that would be a trivial (just config, no re-compile) change to make.
+If only Nginx were trying to put its default log under the ramdisk on /tmp, this would be fixed and Nginx would be totally usable with /opt mounted on the flash device as read-only. You could then, say... redirect Nginx logs to a remote syslog on another machine, which makes way more sense than writing logs to a USB stick (and also eliminates the obvious physical security issue with putting SSL keys on a USB stick, too). Nginx supports syslog by default, so that would be a trivial (just config, no re-compile) change to make.
 
 So this re-build of the Nginx binary does just that: points Nginx logs, lock, and pid to existing folders on the /tmp ramdisk.
 
-How to use:
+How to use, assuming you want to use your router's internal jffs flash as your /opt mount:
 
 
 1. Enable jffs2 as /opt from Administration -> Management
@@ -70,6 +70,8 @@ How to use:
 6. Run nginx once so it can chown all of its directories on /opt to itself (/opt/etc/init.d/S80nginx start && /opt/etc/init.d/S80nginx stop)
 7. In your Administration -> Commands -> Startup, add a command to read-only the internal flash at boot: (mount --bind /jffs/opt /opt && mount -o remount,ro /opt)
 8. Reboot the router
+
+You could of course slightly modify the above to support read-only USB sticks as well, if you prefer that to the internal flash.
 
 
 Here's the Makefile diff if you wish to compile yourself...
