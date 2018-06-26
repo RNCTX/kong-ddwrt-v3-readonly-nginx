@@ -1,4 +1,4 @@
-# nginx-kong-ddwrt-v3.0
+# kong-ddwrt-v3-readonly-nginx
 
 
 Hi folks, I figured someone else might find this useful.
