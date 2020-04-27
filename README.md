@@ -95,3 +95,5 @@ ddwrt@debian:~/Entware/feeds/packages/net/nginx$ diff Makefile Makefile.1
 ```
 
 As of this writing, the current Entware build of Nginx is 1.12.2.  Far into the future, you probably want to use the diff to compile it yourself, as per the instructions on the Entware wiki for [Compiling From Sources](https://github.com/Entware/Entware/wiki/Compile-packages-from-sources)
+
+Edit for 2020: I see no need to go through the upgrade process on my router since I'm not using HTTP2 and am therefore not subject to any of the Nginx vulnerabilities therefrom, but I did recompile this to support the stream_ssl_preread module which allows Nginx to still serve as a name-based load balancing proxy without having to terminate SSL.  Therefore there's no more need to keep SSL keys on the router with the new version.  [Docs on stream_ssl_preread](http://nginx.org/en/docs/stream/ngx_stream_ssl_preread_module.html)
